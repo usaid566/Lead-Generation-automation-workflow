@@ -1,0 +1,415 @@
+{
+  "name": "Lead Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "take these fields as input and generate upto 5 fake leads. Include information related to all the fields. and input all required fields.\n\nGuidelines:\n1)Respond in JSON using this format:\n\n{\"Company Name\":\"\", \"Industry\":\"\", \"Company Size\":\"\", \"Location\":\"\",\"Website\":\"\",\"LinkedIn Company Page\":\"\",\"Decision Maker Name\":\"\",\"Designation\":\"\",\"Email\":\"\",\"Phone\":\"\",\"Lead Source\":\"\",\"Notes\":\"\"}\n\n\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -832,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "2bb5f12d-2eb3-4e23-b6c6-f136ecd0480f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Company Name:  {{ $json['Company Name'] }}\nIndustry: {{ $json.Industry }}\nCompany Size: {{ $json['Company Size'] }}\nLocation: {{ $json.Location }}\nWebsite: {{ $json.Website }}\nLinkedIn: {{ $json['LinkedIn Company Page'] }}\nDecision Maker Name: {{ $json['Decision Maker Name'] }}\nDesignation: {{ $json.Designation }}\nDecision Maker LinkedIn: {{ $json['Decision Maker LinkedIn'] }}\nEmail: {{ $json.Email }}\nPhone: {{ $json.Phone }}\nLead Source: {{ $json['Lead Source'] }}\nNotes: {{ $json.Notes }}\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -576,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "c3b5cdae-ed5d-4d46-aca9-dc437bf25582",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1648,
+        -32
+      ],
+      "id": "d36676c9-3e44-4454-90a4-1af3f67309e8",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Q1FIyYx6UHDdKlK9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07b76ae3-5a0c-492a-a60b-06eebc8d721c",
+              "name": "row_number",
+              "value": "={{$items().map(item => item.json)}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1408,
+        -16
+      ],
+      "id": "97b89658-c7ce-4335-8e92-5f7ac23eed3f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=give me 5 leads with these details {{ $json.row_number }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1088,
+        -32
+      ],
+      "id": "dec2f11b-bd45-43a3-8868-ed5efb5ce3b5",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rcJvRlIBCF3Xw4ub",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = JSON.parse($input.first().json.content.parts[0].text);\n\nreturn data.map(row => ({\n  json: row\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        -32
+      ],
+      "id": "45aa7d18-bdc9-495b-b54d-d7a423cbc5e2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/123aYInHGlIl79OK2vmNysmXcImqqWaGpK_0lB95cmQw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "Company Name"
+          ],
+          "schema": [
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Industry",
+              "displayName": "Industry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn Company Page",
+              "displayName": "LinkedIn Company Page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker Name",
+              "displayName": "Decision Maker Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker LinkedIn",
+              "displayName": "Decision Maker LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead Source",
+              "displayName": "Lead Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "elvator ",
+              "displayName": "elvator ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ice breaker",
+              "displayName": "ice breaker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "call to actton",
+              "displayName": "call to actton",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -528,
+        -32
+      ],
+      "id": "de208cfc-3a5d-4ac6-bb73-a777a8574c0e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Q1FIyYx6UHDdKlK9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1888,
+        -112
+      ],
+      "id": "00ecea30-59d0-4978-aaef-ad063e8e090b",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "47bdec48-7958-43e6-b5db-da870a7178eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0218f646c60a212a6ac797da29837bf54de08243c5937c5509a8564e5303c14"
+  },
+  "id": "VilIH4pnrdq2NAkaGEhSO",
+  "tags": []
+}

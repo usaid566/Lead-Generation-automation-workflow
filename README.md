@@ -1,42 +1,55 @@
-**# Lead-Generation-automation-workflow**# Lead Generator Workflow Overview
+Lead Generator Workflow
+Overview
 
-## Overview
+This workflow automatically generates up to five fake leads based on predefined company and decision-maker fields. The generated leads are structured in JSON format and saved directly to a Google Sheet. It is designed to support testing, demos, and lead-generation simulations.
 
-This workflow automatically generates up to five sample B2B leads using predefined company and decision-maker details. The leads are returned in a structured JSON format and stored directly in a Google Sheet. It is primarily intended for testing, demonstrations, and lead generation simulations.
+Purpose
 
-## Purpose
+The workflow helps:
 
-This workflow enables you to:
+Generate sample B2B leads for testing and demonstrations
 
-* Generate realistic sample B2B leads for testing and demo environments.
-* Automate lead creation using an AI model.
-* Store generated leads in Google Sheets for easy access, review, and further processing.
+Automate structured lead creation using an AI model
 
-## Workflow
+Store generated leads in Google Sheets for easy access and review
 
-1. A Manual Trigger starts the workflow.
-2. Existing records are retrieved from a Google Sheet.
-3. The required data is prepared and sent to the AI model.
-4. The AI generates up to five fake leads in JSON format.
-5. A JavaScript node parses and validates the AI response.
-6. The generated leads are appended to or updated in the connected Google Sheet.
+Workflow Summary
 
-## Requirements
+A manual trigger starts the workflow.
 
-* An n8n instance
-* Google Sheets OAuth credentials
-* Google Gemini API credentials
-* Access to the target Google Sheet
+Existing rows are fetched from a Google Sheet.
 
-## How to Use
+Data is prepared and passed to an AI model.
 
-1. Import or open the workflow in n8n.
-2. Connect your Google Sheets and Gemini credentials.
-3. Execute the workflow using the **Execute Workflow** button.
-4. Verify that the generated leads have been added to the connected Google Sheet.
+The AI model generates up to five fake leads in JSON format.
 
-## Notes
+A JavaScript node parses the AI response.
 
-* All generated leads are fictional and intended solely for testing and demonstration purposes.
-* The workflow expects the target Google Sheet to have the required column structure.
-* The AI response must be valid JSON to ensure successful parsing and storage.
+The generated leads are appended to or updated in the Google Sheet.
+Requirements
+
+n8n instance
+
+Google Sheets OAuth credentials
+
+Google Gemini (PaLM) API credentials
+
+Access to the target Google Sheet
+
+How to Use
+
+Open the workflow in n8n.
+
+Ensure Google Sheets and Gemini credentials are connected.
+
+Click Execute workflow.
+
+Review the newly generated leads in the connected Google Sheet.
+
+Notes
+
+All generated data is fake and intended for testing only.
+
+The workflow assumes the Google Sheet schema already exists.
+
+Ensure the AI response remains valid JSON to avoid parsing errors.
